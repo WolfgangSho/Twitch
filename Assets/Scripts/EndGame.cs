@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class EndGame : MonoBehaviour
 {
+    public GameObject go_gm;
+    GM sc_gm;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        sc_gm = go_gm.GetComponent<GM>();
     }
 
     // Update is called once per frame
@@ -19,7 +22,7 @@ public class EndGame : MonoBehaviour
 
     void OnTriggerEnter(Collider c)
     {
-        Debug.Log("YOU WIN!!!");
+        sc_gm.Checkout();
     }
 
 }

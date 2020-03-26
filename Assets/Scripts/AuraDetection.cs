@@ -10,7 +10,7 @@ public class AuraDetection : MonoBehaviour
     float maxDiam;
 
     public float maxCount;
-    public float delayTime;
+    public float shrinkDelay;
     public float shrinkMult;
 
     float waitTime;
@@ -28,14 +28,19 @@ public class AuraDetection : MonoBehaviour
         {
             Debug.LogError("Bitch, your aura fill is not circular you dumb fuck");
         }
+        
+    }
 
-        fillCount = 0;
-        newScale = 0;
+    public void Reset()
+    {
         yScale = growth.transform.localScale.y;
+        
+        fillCount = 0;
 
-        waitTime = delayTime;
+        waitTime = 0;
 
         UpdateFill();
+
     }
 
     // Update is called once per frame
@@ -62,7 +67,7 @@ public class AuraDetection : MonoBehaviour
     {
         fillCount++;
 
-        waitTime = delayTime;
+        waitTime = shrinkDelay;
 
         if(fillCount >= maxCount)
         {
@@ -77,6 +82,7 @@ public class AuraDetection : MonoBehaviour
     void UpdateFill()
     {
         newScale = fillCount / maxCount * maxDiam;
+
 
         growth.transform.localScale = new Vector3(newScale, yScale, newScale);
     }
