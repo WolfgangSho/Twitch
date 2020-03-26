@@ -22,7 +22,14 @@ public class PlayerController_Sonic3 : MonoBehaviour
         if(playable)
         {
             transform.Translate(0, 0, Input.GetAxis("Vertical") * -moveSpeed*0.1f);
-            transform.Rotate(0, Input.GetAxis("Horizontal") * rotationSpeed, 0,Space.World);
+
+            transform.Rotate(0, Input.GetAxis("Horizontal") * rotationSpeed, 0 ,Space.Self);
+
+            transform.position = new Vector3(transform.position.x,0,transform.position.z);
+
+            transform.rotation = Quaternion.Euler(0,transform.eulerAngles.y,0);
+            
+
         }
     }
 }

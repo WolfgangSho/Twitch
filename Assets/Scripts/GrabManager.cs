@@ -9,11 +9,15 @@ public class GrabManager : MonoBehaviour
     public GameObject go_player;
 
     public float actionRadius;
+
+    public float itemHeight;
+
     Vector3 playerPos;
 
     Raycasting sc_grabmesh;
     
     Transform activeItem;
+    Rigidbody activeBody;
 
     public LayerMask itemMask,grabMeshMask;
 
@@ -30,7 +34,7 @@ public class GrabManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playerPos = go_player.transform.position;
+        playerPos = new Vector3(go_player.transform.position.x,itemHeight,go_player.transform.position.z);
 
         if(!grabbing)
         {
@@ -45,6 +49,14 @@ public class GrabManager : MonoBehaviour
                     if(Vector3.Magnitude(hit.point - playerPos) < actionRadius)
                     {
                         activeItem = hit.transform;
+                        activeBody = hit.rigidbody;
+
+                        activeBody.velocity = Vector3.zero;
+                        activeBody.useGravity = false;
+                        activeBody.isKinematic = false;
+
+                        activeItem.gameObject.GetComponent<Item>().grabbed = true;
+
                         grabbing = true;
                     }
                 }
@@ -55,6 +67,8 @@ public class GrabManager : MonoBehaviour
             Vector3 newPos = sc_grabmesh.GrabPos();
 
             Vector3 distance = newPos - playerPos;
+
+           // Debug.Log(activeBody.velocity);
 
 
             if(Vector3.Magnitude(distance) > actionRadius)
@@ -68,6 +82,10 @@ public class GrabManager : MonoBehaviour
 
             if(Input.GetMouseButtonUp(0))
             {
+                activeBody.useGravity = true;
+
+                activeItem.gameObject.GetComponent<Item>().grabbed = false;
+                
                 grabbing = false;
 
              //   Destroy(gameObject);
