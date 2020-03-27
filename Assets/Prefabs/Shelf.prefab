@@ -764,6 +764,7 @@ GameObject:
   - component: {fileID: 8981203547217666028}
   - component: {fileID: 2728102037475210942}
   - component: {fileID: 9122955751413563651}
+  - component: {fileID: 2242299110256092292}
   m_Layer: 15
   m_Name: Shelf
   m_TagString: Untagged
@@ -864,6 +865,54 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2242299110256092292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2986023510897029294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f71c43573e53040a2fda0a07c8f71d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  go_TopSpawns:
+  - {fileID: 2291101419958647663}
+  - {fileID: 4463287554457895277}
+  - {fileID: 5428299453163178947}
+  - {fileID: 3601300955566510796}
+  - {fileID: 8948997630876044980}
+  - {fileID: 637713874992976760}
+  - {fileID: 568446958156567656}
+  - {fileID: 8801501444687092099}
+  - {fileID: 8386208251680094762}
+  - {fileID: 8584122239628140374}
+  - {fileID: 497813756791442308}
+  go_MiddleSpawns:
+  - {fileID: 6762446169949050845}
+  - {fileID: 8846017756593525682}
+  - {fileID: 8126287899003961827}
+  - {fileID: 4541426515867471232}
+  - {fileID: 3196413454382421791}
+  - {fileID: 5522573404037168996}
+  - {fileID: 8037552006642258173}
+  - {fileID: 8589298234379354911}
+  - {fileID: 2449839225639872080}
+  - {fileID: 2826735229013918119}
+  - {fileID: 4703677161919846595}
+  go_BottomSpawns:
+  - {fileID: 1630300158698282740}
+  - {fileID: 6085630813393447551}
+  - {fileID: 8633784072458170185}
+  - {fileID: 1355535126698119219}
+  - {fileID: 2499158269977522458}
+  - {fileID: 2447712461389907207}
+  - {fileID: 1576143715457671322}
+  - {fileID: 5537247575234768164}
+  - {fileID: 1784727540711769551}
+  - {fileID: 2123671500173815975}
+  - {fileID: 4952750380029528578}
 --- !u!1 &3196413454382421791
 GameObject:
   m_ObjectHideFlags: 0
