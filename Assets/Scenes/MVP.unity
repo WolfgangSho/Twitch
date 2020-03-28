@@ -45909,6 +45909,7 @@ GameObject:
   - component: {fileID: 889437166}
   - component: {fileID: 889437168}
   - component: {fileID: 889437169}
+  - component: {fileID: 889437170}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -45930,6 +45931,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   go_player: {fileID: 819326119}
   go_aura: {fileID: 1594698061}
+  go_canvas: {fileID: 581769002}
   go_menu: {fileID: 466121365}
   playerStartPos: {x: 40, y: 0, z: -50}
   playerStartRot: {x: 0, y: 180, z: 0}
@@ -45982,6 +45984,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6650e9af3c64b33468b04b1096b20786, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shelvesperS: 3
+  topSpawnNo: 11
+  middleSpawnNo: 11
+  bottomSpawnNo: 11
   ItemStore: {fileID: 70820091}
   LeftRow:
   - {fileID: 199057409}
@@ -46056,6 +46062,29 @@ MonoBehaviour:
   - baseDensity: 1440
     noOfBusyAisles: 3
     noOfEmptyAisles: 2
+--- !u!114 &889437170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889437165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ccf2f975a9b92c40ae057f61dc89ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  store: {fileID: 70820091}
+  swimmers:
+  - prefab: {fileID: 6662143243109044852, guid: edfc62ad4bec2bf48ab752cb42e90570,
+      type: 3}
+    spawnAmount: 10
+  - prefab: {fileID: 6662143243109044852, guid: cbccb641c82d6ff478faf3bbc6b2fc9c,
+      type: 3}
+    spawnAmount: 10
+  - prefab: {fileID: 2491814783338370888, guid: ac08d3105d0a5a1469ecb12623f7d76a,
+      type: 3}
+    spawnAmount: 10
 --- !u!1001 &893024597
 PrefabInstance:
   m_ObjectHideFlags: 0
