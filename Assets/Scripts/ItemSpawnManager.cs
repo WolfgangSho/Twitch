@@ -12,7 +12,6 @@ public class ItemSpawnManager : MonoBehaviour
 
     public int topSpawnNo;
     public int middleSpawnNo;
-
     public int bottomSpawnNo;
     
     public GameObject ItemStore;
@@ -88,11 +87,11 @@ public class ItemSpawnManager : MonoBehaviour
 
             bag.RemoveAt(result);
 
-            int aisleNo = GetFreeAisle(r);
+            AisleID aisle = GetFreeAisle(r);
 
             int density = Random.Range(busyMM[0],busyMM[1]);
 
-            SpawnAisle(r,aisleNo,density);
+            SpawnAisle(aisle,density);
 
         }
 
@@ -100,7 +99,102 @@ public class ItemSpawnManager : MonoBehaviour
 
         int emptyCount = bulk[day].noOfEmptyAisles;
 
-        bag.Clear();
+        for(int i=0; i<emptyCount;i++)
+        {
+            AisleID aisle = GetFreeAisle();
+
+            int density = Random.Range(emptyMM[0],emptyMM[1]);
+
+            SpawnAisle(aisle,density);
+        }
+
+        ///Determine number of aisles left and density left
+
+        int aislesLeft = LeftRow.Length + MiddleRow.Length + RightRow.Length - busyCount - emptyCount;
+
+        int varianceAmount = Random.Range(-variance,variance+1);
+        
+        int remainingDensity = bulk[day].baseDensity + varianceAmount - currentDensity;
+
+    //    Debug.Log("variance amount: " + varianceAmount + " remaining density: " + remainingDensity + " current density: " + currentDensity);
+
+        int ABCounter = 0;
+
+        ///Half remaining aisles get 2/3
+
+        int alphaA = Mathf.FloorToInt((float)aislesLeft/2f);
+
+        int densityAlpha = Mathf.CeilToInt(2f * (float)remainingDensity / 3f);
+
+        int totalAlpha = densityAlpha;
+
+        int densityPerAAisle = Mathf.CeilToInt((float)densityAlpha/(float)alphaA);
+
+        for(int i=0; i<alphaA;i++)
+        {
+            AisleID aisle = GetFreeAisle();
+
+            if(densityAlpha > densityPerAAisle)
+            {
+                SpawnAisle(aisle,densityPerAAisle);
+
+                ABCounter += densityPerAAisle;
+
+                densityAlpha -= densityPerAAisle;
+            }
+            else
+            {
+                SpawnAisle(aisle,densityAlpha);
+
+                ABCounter += densityAlpha;
+            }
+        }
+    //    Debug.Log("requested alphas: " + ABCounter);
+
+        ABCounter = 0;
+
+        ///Other half gets 1/3
+        int betaA = aislesLeft - alphaA;
+
+        int densityBeta = remainingDensity - totalAlpha;
+
+        int densityPerBAisle = Mathf.CeilToInt((float)densityBeta/(float)betaA);
+
+        for(int i=0; i<betaA;i++)
+        {
+             AisleID aisle = GetFreeAisle();
+
+            if(densityBeta > densityPerBAisle)
+            {
+                SpawnAisle(aisle,densityPerBAisle);
+
+                ABCounter +=densityPerBAisle;
+
+                densityBeta -= densityPerBAisle;
+            }
+            else
+            {
+                SpawnAisle(aisle,densityBeta);
+
+                ABCounter += densityBeta;
+            }
+        }
+
+        Debug.Log(bulk[day].baseDensity + varianceAmount + " planned density. " + 
+            aisleDCounter + " sum of requested densities. " + 
+            currentDensity + " items spawned. Planned to spawned Diff: " + 
+            (bulk[day].baseDensity + varianceAmount - currentDensity));
+
+    //    Debug.Log("requested betas: " + ABCounter);
+
+
+
+
+    }
+
+    AisleID GetFreeAisle()
+    {
+        List<Row> bag = new List<Row>();
 
         for(int i=0; i<LeftRow.Length;i++)
         {
@@ -126,35 +220,17 @@ public class ItemSpawnManager : MonoBehaviour
             }
         }
 
-        for(int i=0; i<emptyCount;i++)
-        {
-            int result = Random.Range(0,bag.Count);
+        int result = Random.Range(0,bag.Count);
 
-            Row r = bag[i];
+        Row r = bag[result];
 
-            bag.RemoveAt(result);
+        AisleID id = GetFreeAisle(r);
 
-            int aisleNo = GetFreeAisle(r);
-
-            int density = Random.Range(emptyMM[0],emptyMM[1]);
-
-            SpawnAisle(r,aisleNo,density);
-        }
-
-
-        ///Determine number of aisles left and density left
-
-        ///Half remaining aisles get 2/3
-
-        ///Other half gets 1/3
-
-        Debug.Log(aisleDCounter + " sum of aisle densities. " + currentDensity + " items spawned. Diff: " + (currentDensity - aisleDCounter));
-
-
+        return id;
 
     }
 
-    int GetFreeAisle(Row r)
+    AisleID GetFreeAisle(Row r)
     {
         GameObject[] tempRow = new GameObject[0];
 
@@ -184,15 +260,20 @@ public class ItemSpawnManager : MonoBehaviour
             }
         }
 
-        return freeI[Random.Range(0,freeI.Count)];
+        AisleID id = new AisleID{row = r, ailseNo = freeI[Random.Range(0,freeI.Count)]};
+
+        return id;
     }
 
 
 
-    void SpawnAisle(Row r,int aisle, int density)
+    void SpawnAisle(AisleID id, int density)
     {
         aisleDCounter += density;
      //   Debug.Log("AD: " + density);
+
+        Row r = id.row;
+        int aisle = id.ailseNo;
 
         switch(r)
         {
@@ -254,17 +335,17 @@ public class ItemSpawnManager : MonoBehaviour
 
         if(Random.value > 0.5f)
         {
-            SpawnSide(leftShelves,sideADensity);
-            SpawnSide(rightShelves,sideBDensity);
+            SpawnSide(leftShelves,sideADensity, false);
+            SpawnSide(rightShelves,sideBDensity, true);
         }
         else
         {
-            SpawnSide(leftShelves,sideBDensity);
-            SpawnSide(rightShelves,sideADensity);
+            SpawnSide(leftShelves,sideBDensity, false);
+            SpawnSide(rightShelves,sideADensity, true);
         }
     }
 
-    void SpawnSide(GameObject[] shelves, int density)
+    void SpawnSide(GameObject[] shelves, int density, bool flip)
     {
         //reference to shelf scripts
 
@@ -280,7 +361,7 @@ public class ItemSpawnManager : MonoBehaviour
 
         float d = (float)density;
 
-        int shelfDensity = Mathf.CeilToInt(d/(float)shelvesperS) - 1;
+        int shelfDensity = Mathf.CeilToInt(d/(float)shelvesperS) - 2;
 
         d = (float)shelfDensity;
 
@@ -328,7 +409,7 @@ public class ItemSpawnManager : MonoBehaviour
 
                 bag.Remove(index);
 
-                SpawnItem(spawns[i].GetPos(ShelfNo.Top,index));
+                SpawnItem(spawns[i].GetPos(ShelfNo.Top,index),flip);
             }
 
             //ask for mid tier positions
@@ -346,7 +427,7 @@ public class ItemSpawnManager : MonoBehaviour
 
                 bag.Remove(index);
 
-                SpawnItem(spawns[i].GetPos(ShelfNo.Middle,index));
+                SpawnItem(spawns[i].GetPos(ShelfNo.Middle,index),flip);
             }
 
             //ask for bottom tier positions
@@ -364,14 +445,29 @@ public class ItemSpawnManager : MonoBehaviour
 
                 bag.Remove(index);
 
-                SpawnItem(spawns[i].GetPos(ShelfNo.Bottom,index));
+                SpawnItem(spawns[i].GetPos(ShelfNo.Bottom,index), flip);
             }
         }
     }
 
-    void SpawnItem(Vector3 pos)
+    void SpawnItem(Vector3 pos, bool flip)
     {
         currentDensity++;
+
+        GameObject g = pool.GetItem();
+
+        g.transform.position = pos;
+
+        if(flip)
+        {
+            g.transform.rotation = Quaternion.Euler(0,180,0);
+        }
+        else
+        {
+            g.transform.rotation = Quaternion.Euler(0,0,0);
+        }
+
+        g.SetActive(true);
 
     }
 
@@ -391,6 +487,13 @@ public class DayBulk
 
     public int noOfEmptyAisles;
 
+}
+
+public class AisleID
+{
+    public Row row;
+
+    public int ailseNo;
 }
 
 public enum Row

@@ -40,7 +40,7 @@ public class GrabManager : MonoBehaviour
         {
             if(Input.GetMouseButtonDown(0))
             {
-                
+
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
