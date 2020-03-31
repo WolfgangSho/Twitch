@@ -77,7 +77,7 @@ public class ObjectPooler : MonoBehaviour
         int type = (int)t;
         int next = nextAvailable[type];
 
-        GameObject g  = new GameObject();
+        GameObject g;
         
         if(next < poolTypes[type].Count)
         {
@@ -88,6 +88,7 @@ public class ObjectPooler : MonoBehaviour
         else
         {
             Debug.LogError("Out of " + System.Enum.GetName(typeof(ItemType),type));
+            g = null;
         }
 
         return g;
