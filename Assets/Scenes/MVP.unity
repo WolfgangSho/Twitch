@@ -13989,7 +13989,7 @@ MonoBehaviour:
   store: {fileID: 70820091}
   swimmers:
   - type: 0
-    prefab: {fileID: 7861387718154783773, guid: 95470b4ba59b24f4a824f316391c82fb,
+    prefab: {fileID: 7861387718154783773, guid: 576f1070d93b16d4890504cceacd8559,
       type: 3}
     spawnAmount: 10000
     rarity: 0
@@ -13999,7 +13999,7 @@ MonoBehaviour:
     spawnAmount: 10000
     rarity: 2
   - type: 2
-    prefab: {fileID: 7861387718154783773, guid: 2f3b93874dda90047b53eeca7bff7895,
+    prefab: {fileID: 7861387718154783773, guid: 37ec287150f49ee4fb81c630ec79875d,
       type: 3}
     spawnAmount: 10000
     rarity: 1
