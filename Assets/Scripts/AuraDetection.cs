@@ -4,43 +4,54 @@ using UnityEngine;
 
 public class AuraDetection : MonoBehaviour
 {
-    public GameObject growth;
-    public GameObject fill;
+    public GameObject go_SanitizerFill;
 
-    float maxDiam;
-
-    public float maxCount;
+    public float maxRisk;
     public float shrinkDelay;
     public float shrinkMult;
+    public float drainSpeed;
 
     float waitTime;
 
-    float fillCount;
-    float newScale;
-    float yScale;
+    
+    float riskCount;
+    float fillPercent; //between 0 and 100
+
+    ControlFill fill;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        maxDiam = fill.transform.localScale.x;
+        fill = go_SanitizerFill.GetComponent<ControlFill>();
 
-        if (fill.transform.localScale.x != fill.transform.localScale.z)
-        {
-            Debug.LogError("Bitch, your aura fill is not circular you dumb fuck");
-        }
+        fillPercent = 100f;
+
+        riskCount = 0;
         
     }
 
     public void Reset()
     {
-        yScale = growth.transform.localScale.y;
-        
-        fillCount = 0;
+        fillPercent = 100f;
 
         waitTime = 0;
 
+        riskCount = 0;
+
         UpdateFill();
 
+    }
+
+    public void AddFill(float amount)
+    {
+        fillPercent += amount;
+
+        if(fillPercent > 100f)
+        {
+            fillPercent = 100f;
+        }
+
+        UpdateFill();
     }
 
     // Update is called once per frame
@@ -48,42 +59,46 @@ public class AuraDetection : MonoBehaviour
     {
         if(waitTime > 0)
         {
-            waitTime -= Time.fixedTime;
+            waitTime -= Time.fixedDeltaTime;
         }
         else
         {
-            fillCount -= shrinkMult;
+            riskCount -= shrinkMult;
 
-            if(fillCount < 0)
+            if(riskCount < 0)
             {
-                fillCount = 0;
+                riskCount = 0;
             }
-
-            UpdateFill();
         }
     }
 
     void OnTriggerStay(Collider c)
     {
-        fillCount++;
+        riskCount+= Time.fixedDeltaTime;
 
         waitTime = shrinkDelay;
 
-        if(fillCount >= maxCount)
+    //    Debug.Log("current risk: " + riskCount);
+
+        if(riskCount >= maxRisk)
         {
-            Debug.Log("I BEEN IFECTED");
-            fillCount = 0;
+            Debug.Log("I BEEIN IFECTED");
+
+            fillPercent -= drainSpeed;
+
+            UpdateFill();
         }
-
-        UpdateFill();
-
     }
 
     void UpdateFill()
     {
-        newScale = fillCount / maxCount * maxDiam;
-
-
-        growth.transform.localScale = new Vector3(newScale, yScale, newScale);
+        if(fillPercent < 0)
+        {
+            Debug.Log("YOU LOSE SIR");
+        }
+        else
+        {
+            fill.SetFill(fillPercent);
+        }
     }
 }
