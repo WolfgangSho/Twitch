@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ObjectPooler : MonoBehaviour
@@ -12,9 +13,9 @@ public class ObjectPooler : MonoBehaviour
     public int minBagSize;
 
     
+    public RaritySpawnAmount[] raritySpawns;
     public GameObject store;
-    public Swimmer[] swimmers;
-
+    public Item[] itemsToSpawn;
     
     List<int> nextAvailable;
 
@@ -22,7 +23,6 @@ public class ObjectPooler : MonoBehaviour
     public List<List<GameObject>> poolTypes;
 
     List<ItemRarity> bag;
-
 
 
     // Start is called before the first frame update
@@ -39,19 +39,33 @@ public class ObjectPooler : MonoBehaviour
 
         poolTypes = new List<List<GameObject>>();
 
-        for(int i=0; i<swimmers.Length;i++)
+        foreach(ItemType it in System.Enum.GetValues(typeof(ItemType)))
         {
             nextAvailable.Add(0);
 
             poolTypes.Add(new List<GameObject>());
+        }
 
-            for(int j=0; j<swimmers[i].spawnAmount;j++)
+
+        for(int i=0; i<itemsToSpawn.Length;i++)
+        {
+            
+            IEnumerable<int> spawnAmount = raritySpawns.Where(spawns => spawns.rarity == itemsToSpawn[i].rarity).Select(spawns => spawns.amount);
+
+            
+            if(spawnAmount.Count() != 1)
             {
-                GameObject g = (GameObject)Instantiate(swimmers[i].prefab);
+                Debug.LogError("More or less than one inital spawn amount found for rarity " + itemsToSpawn[i].rarity);
+            }
+
+
+            for(int j=0; j<spawnAmount.First();j++)
+            {
+                GameObject g = (GameObject)Instantiate(itemsToSpawn[i].prefab);
                 g.SetActive(false);
                 g.transform.parent = store.transform;
 
-                poolTypes[i].Add(g);
+                poolTypes[(int)itemsToSpawn[i].type].Add(g);
             }
         }
     }
@@ -71,6 +85,23 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
+    public GameObject GetItem()
+    {
+        if(bag.Count < minBagSize)
+        {
+            ResetRarityBag();
+        }
+
+        int index = Random.Range(0,bag.Count);
+
+        ItemRarity rarity = bag[index];
+
+        bag.RemoveAt(index);
+
+        List<ItemType> candidates = itemsToSpawn.Where(p => p.rarity == rarity).Select(p => p.type).ToList();
+
+        return GetNext(candidates[Random.Range(0,candidates.Count)]);
+    }
 
     public GameObject GetNext(ItemType t)
     {
@@ -92,32 +123,6 @@ public class ObjectPooler : MonoBehaviour
         }
 
         return g;
-    }
-
-    public GameObject GetItem()
-    {
-        if(bag.Count < minBagSize)
-        {
-            ResetRarityBag();
-        }
-
-        int index = Random.Range(0,bag.Count);
-
-        ItemRarity rarity = bag[index];
-
-        bag.RemoveAt(index);
-
-        List<ItemType> candidates = new List<ItemType>();
-
-        foreach(Swimmer s in swimmers)
-        {
-            if(s.rarity == rarity)
-            {
-                candidates.Add(s.type);
-            }
-        }
-
-        return GetNext(candidates[Random.Range(0,candidates.Count)]);
     }
 
     void ResetRarityBag()
@@ -157,27 +162,28 @@ public class ObjectPooler : MonoBehaviour
         if(Input.GetMouseButtonDown(1))
         {
             Refresh();
-        }*/
+        }
+        */
         
     }
 }
 
 [System.Serializable]
-public class Swimmer
+public class RaritySpawnAmount
 {
-    public ItemType type;
-   
-    public GameObject prefab;
-
-    public int spawnAmount;
-
     public ItemRarity rarity;
+
+    public int amount;
 }
 
 public enum ItemType
 {
     Cereal,
+    Snacks,
+    MiscBoxed,
     Bread,
+    ToiletRoll,
+    MiscPack,
     TinCan
 }
 

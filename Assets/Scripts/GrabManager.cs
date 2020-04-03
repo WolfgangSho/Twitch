@@ -55,7 +55,7 @@ public class GrabManager : MonoBehaviour
                         activeBody.useGravity = false;
                         activeBody.isKinematic = false;
 
-                        activeItem.gameObject.GetComponent<Item>().grabbed = true;
+                        activeItem.gameObject.GetComponent<ItemState>().grabbed = true;
 
                         grabbing = true;
                     }
@@ -84,7 +84,7 @@ public class GrabManager : MonoBehaviour
             {
                 activeBody.useGravity = true;
 
-                activeItem.gameObject.GetComponent<Item>().grabbed = false;
+                activeItem.gameObject.GetComponent<ItemState>().grabbed = false;
                 
                 grabbing = false;
 

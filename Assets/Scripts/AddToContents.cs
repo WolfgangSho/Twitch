@@ -17,7 +17,7 @@ public class AddToContents : MonoBehaviour
         if( mask == (mask| (1 << c.gameObject.layer)))
         {
             c.transform.SetParent(transform);
-            c.gameObject.GetComponent<Item>().EnterTrolley();
+            c.gameObject.GetComponent<ItemState>().EnterTrolley();
         }
     }
 
@@ -26,7 +26,7 @@ public class AddToContents : MonoBehaviour
         if(c.transform.parent == transform && !c.attachedRigidbody.isKinematic)
         {
             c.transform.SetParent(null);
-            c.gameObject.GetComponent<Item>().ExitTrolley();
+            c.gameObject.GetComponent<ItemState>().ExitTrolley();
         }
     }
 

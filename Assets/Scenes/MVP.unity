@@ -1951,7 +1951,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Item Number One
+  m_text: For The Corne God
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2020,10 +2020,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 109710961}
-    characterCount: 15
+    characterCount: 17
     spriteCount: 0
-    spaceCount: 2
-    wordCount: 3
+    spaceCount: 3
+    wordCount: 4
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -14112,23 +14112,29 @@ MonoBehaviour:
   uncommonWeight: 10
   rareWeight: 5
   minBagSize: 3
+  raritySpawns:
+  - rarity: 0
+    amount: 1000
+  - rarity: 1
+    amount: 500
+  - rarity: 2
+    amount: 200
+  - rarity: 3
+    amount: 700
   store: {fileID: 70820091}
-  swimmers:
-  - type: 0
-    prefab: {fileID: 7861387718154783773, guid: 7b8619fa72081d04d87ca0196f780f01,
-      type: 3}
-    spawnAmount: 10000
-    rarity: 0
-  - type: 1
-    prefab: {fileID: 7861387718154783773, guid: d02b5ce3466f918478a60883389a8893,
-      type: 3}
-    spawnAmount: 10000
-    rarity: 2
-  - type: 2
-    prefab: {fileID: 7861387718154783773, guid: 07075a5cefc6abb4c8b2dd3b4ced01a7,
-      type: 3}
-    spawnAmount: 10000
-    rarity: 1
+  itemsToSpawn:
+  - {fileID: 11400000, guid: 06f9cf0c93d17c64f95a2cead60befd2, type: 2}
+  - {fileID: 11400000, guid: f41053321eece1e489654f93ebd530a9, type: 2}
+  - {fileID: 11400000, guid: e9c6b3da6e4377044926f6f99acee7d8, type: 2}
+  - {fileID: 11400000, guid: c6a5549730912414fba907d63418dc54, type: 2}
+  - {fileID: 11400000, guid: 9f639b5c847270a48b8b55741b0ba3b4, type: 2}
+  - {fileID: 11400000, guid: e5bed80347c8ad14fb71d82bdf665d70, type: 2}
+  - {fileID: 11400000, guid: bf2b06780f1fb834ca91cc7ec2c9641a, type: 2}
+  - {fileID: 11400000, guid: 462051a965ef35f4fbde2868511cb9a0, type: 2}
+  - {fileID: 11400000, guid: 6072d737fc189c346aec7c517ec9fc4a, type: 2}
+  - {fileID: 11400000, guid: 2e4b3d08e58a216499879b3148f2ffe4, type: 2}
+  - {fileID: 11400000, guid: 7e4c12ed682303d41b06c84f1efac65b, type: 2}
+  - {fileID: 11400000, guid: 0405d3dfdef3e1745915375d5cabb7c6, type: 2}
 --- !u!1001 &893453208
 PrefabInstance:
   m_ObjectHideFlags: 0

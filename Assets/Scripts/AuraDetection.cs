@@ -82,7 +82,7 @@ public class AuraDetection : MonoBehaviour
 
         if(riskCount >= maxRisk)
         {
-            Debug.Log("I BEEIN IFECTED");
+         //   Debug.Log("I BEEIN IFECTED");
 
             fillPercent -= drainSpeed;
 
