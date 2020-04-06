@@ -146,6 +146,35 @@ public class ObjectPooler : MonoBehaviour
 
     }
 
+    public List<Item> GetList(ItemRarity rarity, int amount, int maxDuplicates)
+    {
+        List<Item> selected = new List<Item>();
+        
+        List<Item> options = itemsToSpawn.Where(t => t.rarity == rarity).ToList();
+
+        int[] duplicates = new int[options.Count];
+
+        for(int i=0; i<amount; i++)
+        {
+            int index = Random.Range(0,options.Count);
+            
+            Item candidate  = options[index];
+
+            if(duplicates[index] < maxDuplicates)
+            {
+                selected.Add(candidate);
+                duplicates[index]++;
+            }
+            else
+            {
+                //Debug.Log("too many boi " + duplicates[index]);
+                i--;
+            }
+        }
+
+        return selected;
+    }
+
 
 
     // Update is called once per frame

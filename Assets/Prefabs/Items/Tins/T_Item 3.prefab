@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7dbc7454652d364d826f108ec39842d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scriptableObject: {fileID: 11400000, guid: 06f9cf0c93d17c64f95a2cead60befd2, type: 2}
   grabbed: 0
 --- !u!54 &5620813011390966161
 Rigidbody:

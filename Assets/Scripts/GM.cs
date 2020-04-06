@@ -17,7 +17,7 @@ public class GM : MonoBehaviour
     AuraDetection sc_aura;
     PlayerController_Sonic3 sc_pc;
     ObjectPooler sc_pool;
-
+    ShoppingListManager sc_list;
     ItemSpawnManager sc_spawn;
 
     float cTime;
@@ -28,6 +28,7 @@ public class GM : MonoBehaviour
         sc_aura = go_aura.GetComponent<AuraDetection>();
         sc_pc = go_player.GetComponent<PlayerController_Sonic3>();
         sc_pool = GetComponent<ObjectPooler>();
+        sc_list = GetComponent<ShoppingListManager>();
         sc_spawn = GetComponent<ItemSpawnManager>();
 
         go_canvas.SetActive(true);
@@ -54,6 +55,8 @@ public class GM : MonoBehaviour
         go_menu.SetActive(false);
 
         sc_pc.playable = true;
+
+        sc_list.PickItems();
 
         sc_spawn.GenerateStock(8);
 

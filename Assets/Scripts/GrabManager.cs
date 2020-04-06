@@ -8,6 +8,8 @@ public class GrabManager : MonoBehaviour
 
     public GameObject go_player;
 
+    
+    public float nearRadius;
     public float actionRadius;
 
     public float itemHeight;
@@ -76,6 +78,13 @@ public class GrabManager : MonoBehaviour
                 Vector3 direction = distance.normalized;
 
                 newPos = playerPos + (direction * actionRadius);
+            }
+
+            if(Vector3.Magnitude(distance) < nearRadius)
+            {
+                Vector3 direction = distance.normalized;
+
+                newPos = playerPos + (direction * nearRadius);
             }
 
             activeItem.position = newPos;

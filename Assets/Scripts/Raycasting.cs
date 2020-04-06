@@ -26,6 +26,13 @@ public class Raycasting : MonoBehaviour
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+        if(ray.direction.y >= 0)
+        {
+            float up = -0.01f;
+
+            ray.direction = new Vector3(ray.direction.x,up,ray.direction.z);
+        }
+
         if(Physics.Raycast(ray,out hit,Mathf.Infinity,mask,QueryTriggerInteraction.Collide))
         {
             return hit.point;

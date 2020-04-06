@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ItemState : MonoBehaviour
 {
+    
+    public Item scriptableObject;
     bool inTrolley;
     public bool grabbed;
 
@@ -21,6 +23,11 @@ public class ItemState : MonoBehaviour
         inTrolley = false;
         grabbed = false;
 
+    }
+
+    public Item GetSO()
+    {
+        return scriptableObject;
     }
 
     public void EnterTrolley()
