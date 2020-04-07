@@ -9,19 +9,16 @@ public class ItemState : MonoBehaviour
     bool inTrolley;
     public bool grabbed;
 
-    float maxVel;
-
-    Rigidbody rb;
+ //   Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-
-        maxVel = Mathf.Infinity;
+      //  rb = GetComponent<Rigidbody>();
 
         inTrolley = false;
         grabbed = false;
+
 
     }
 
@@ -33,20 +30,26 @@ public class ItemState : MonoBehaviour
     public void EnterTrolley()
     {
         inTrolley = true;
+
+        transform.localScale = Vector3.one;
     }
 
     public void ExitTrolley()
     {
         Debug.Log("hello");
         inTrolley = false;
-        rb.isKinematic = false;
-        rb.mass = 100;
+     //   rb.isKinematic = false;
+     //   rb.mass = 100;
      //   rb.detectCollisions = true;
+
+        transform.localScale = Vector3.one;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        
+        /*
         if(inTrolley && !grabbed)
         {
             if(rb.velocity.y > 0)
@@ -60,6 +63,6 @@ public class ItemState : MonoBehaviour
                 rb.mass = 0;
           //      rb.detectCollisions = false;
             }
-        }
+        }*/
     }
 }

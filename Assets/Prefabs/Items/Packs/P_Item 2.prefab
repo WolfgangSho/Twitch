@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8441316314788542657}
   - component: {fileID: 1560803865529020702}
   - component: {fileID: -327138416852873817}
-  - component: {fileID: 5620813011390966161}
+  - component: {fileID: 6803592496222923965}
   m_Layer: 13
   m_Name: P_Item 2
   m_TagString: Untagged
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scriptableObject: {fileID: 11400000, guid: f41053321eece1e489654f93ebd530a9, type: 2}
   grabbed: 0
---- !u!54 &5620813011390966161
+--- !u!54 &6803592496222923965
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

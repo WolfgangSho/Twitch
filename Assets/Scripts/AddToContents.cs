@@ -23,7 +23,7 @@ public class AddToContents : MonoBehaviour
 
     void OnTriggerExit(Collider c)
     {
-        if(c.transform.parent == transform && !c.attachedRigidbody.isKinematic)
+        if(c.transform.parent == transform)
         {
             c.transform.SetParent(null);
             c.gameObject.GetComponent<ItemState>().ExitTrolley();

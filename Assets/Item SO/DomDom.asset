@@ -16,3 +16,4 @@ MonoBehaviour:
   type: 5
   prefab: {fileID: 7861387718154783773, guid: 7b8619fa72081d04d87ca0196f780f01, type: 3}
   rarity: 2
+  weight: 0.1
