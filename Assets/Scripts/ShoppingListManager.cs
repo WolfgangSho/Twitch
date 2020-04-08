@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public class ShoppingListManager : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class ShoppingListManager : MonoBehaviour
 
     List<Item> desiredItems;
 
+    bool[] striked;
+
+    List<Item> trolleyContents;
+
+    List<UniqueItemCount> listIndex;
 
     // Start is called before the first frame update
     void Awake()
@@ -56,6 +62,8 @@ public class ShoppingListManager : MonoBehaviour
     public void PickItems()
     {
         desiredItems = new List<Item>();
+        trolleyContents = new List<Item>();
+        listIndex = new List<UniqueItemCount>();
 
         //for each rarity type that we're using ask the object pool for some items
         for(int i=0; i<usedRarities.Length; i++)
@@ -63,10 +71,89 @@ public class ShoppingListManager : MonoBehaviour
             desiredItems.AddRange(sc_pool.GetList(usedRarities[i].rarity,usedRarities[i].amount, maximumDuplicates));
         }
 
+        striked = new bool[desiredItems.Count];
+
+        UpdateList();
+
         for(int i=0; i<desiredItems.Count;i++)
         {
+            striked[i] = false;
             text_items[i].text = desiredItems[i].fullName;
+
+            int listIndexElement = -1;
+
+            for(int j=0; j<listIndex.Count;j++)
+            {
+                if(listIndex[j].inList == desiredItems[i])
+                {
+                    listIndexElement = j;
+                }
+            }
+            
+            if(listIndexElement == -1)
+            {
+                listIndex.Add(new UniqueItemCount(desiredItems[i],i));
+            }
+            else
+            {
+                listIndex[listIndexElement].Add(i);
+            }
         }
+    }
+
+    public void AddToTrolley(Item it)
+    {
+        trolleyContents.Add(it);
+        UpdateList();
+    }
+
+    public void RemoveFromTrolley(Item it)
+    {
+        trolleyContents.Remove(it);
+        UpdateList();
+    }
+
+    void UpdateList()
+    {
+        for(int i=0; i<striked.Length; i++)
+        {
+            striked[i] = false;
+        }
+
+        for(int i=0;i < listIndex.Count;i++)
+        {
+            Item it = listIndex[i].inList;
+
+            int inTrolley = 0;
+
+            for(int j=0; j<trolleyContents.Count;j++)
+            {
+                if(trolleyContents[j] == it)
+                {
+                    inTrolley++;
+                }
+            }
+
+            for(int j=0; j<listIndex[i].indices.Count;j++)
+            {
+                if(j < inTrolley)
+                {
+                    striked[listIndex[i].indices[j]] = true;
+                }
+            }
+        }
+
+        for(int i=0; i<striked.Length;i++)
+        {
+            if(striked[i])
+            {
+                text_items[i].fontStyle = FontStyles.Strikethrough;
+            }
+            else
+            {
+                text_items[i].fontStyle = FontStyles.Normal;
+            }
+        }       
     }
 
     // Update is called once per frame
@@ -81,4 +168,25 @@ public class ItemOfEachRarity
     public ItemRarity rarity;
 
     public int amount;
+}
+
+public class UniqueItemCount
+{
+    public Item inList;
+
+    public List<int> indices;
+
+    public UniqueItemCount(Item it, int index)
+    {
+        inList = it;
+
+        indices = new List<int>();
+
+        indices.Add(index);
+    }
+
+    public void Add(int index)
+    {
+        indices.Add(index);
+    }
 }

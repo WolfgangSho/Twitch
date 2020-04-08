@@ -1951,7 +1951,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: For The Corne God
+  m_text: Item Number One
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2020,10 +2020,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 109710961}
-    characterCount: 17
+    characterCount: 15
     spriteCount: 0
-    spaceCount: 3
-    wordCount: 4
+    spaceCount: 2
+    wordCount: 3
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -13828,17 +13828,22 @@ MonoBehaviour:
     amount: 700
   store: {fileID: 70820091}
   itemsToSpawn:
+  - {fileID: 11400000, guid: eff6a0e3938b76e449b6c400dc4d6b56, type: 2}
+  - {fileID: 11400000, guid: b4f45272bffea2541855c628b4b0cbf1, type: 2}
   - {fileID: 11400000, guid: 06f9cf0c93d17c64f95a2cead60befd2, type: 2}
   - {fileID: 11400000, guid: f41053321eece1e489654f93ebd530a9, type: 2}
+  - {fileID: 11400000, guid: 8d0d88d87fa443440a310b45640aa9fb, type: 2}
   - {fileID: 11400000, guid: e9c6b3da6e4377044926f6f99acee7d8, type: 2}
   - {fileID: 11400000, guid: c6a5549730912414fba907d63418dc54, type: 2}
   - {fileID: 11400000, guid: 9f639b5c847270a48b8b55741b0ba3b4, type: 2}
   - {fileID: 11400000, guid: e5bed80347c8ad14fb71d82bdf665d70, type: 2}
   - {fileID: 11400000, guid: bf2b06780f1fb834ca91cc7ec2c9641a, type: 2}
   - {fileID: 11400000, guid: 462051a965ef35f4fbde2868511cb9a0, type: 2}
+  - {fileID: 11400000, guid: 9b0645b203d6ae048bcb914e58c4f9a9, type: 2}
   - {fileID: 11400000, guid: 6072d737fc189c346aec7c517ec9fc4a, type: 2}
   - {fileID: 11400000, guid: 2e4b3d08e58a216499879b3148f2ffe4, type: 2}
   - {fileID: 11400000, guid: 7e4c12ed682303d41b06c84f1efac65b, type: 2}
+  - {fileID: 11400000, guid: 49541e93a930fea438073de990386119, type: 2}
   - {fileID: 11400000, guid: 0405d3dfdef3e1745915375d5cabb7c6, type: 2}
 --- !u!114 &889437171
 MonoBehaviour:
@@ -14641,6 +14646,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 8192
+  go_GM: {fileID: 889437165}
 --- !u!1001 &975622457
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22586,7 +22592,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Item Number Four
+  m_text: 'Item Number Four
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22655,9 +22663,9 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1497928616}
-    characterCount: 16
+    characterCount: 17
     spriteCount: 0
-    spaceCount: 2
+    spaceCount: 3
     wordCount: 3
     linkCount: 0
     lineCount: 1

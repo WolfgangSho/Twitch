@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,7 +20,7 @@ public class ObjectPooler : MonoBehaviour
     List<int> nextAvailable;
 
     [SerializeField]
-    public List<List<GameObject>> poolTypes;
+    public List<List<GameObject>> pooledItems;
 
     List<ItemRarity> bag;
 
@@ -37,18 +37,13 @@ public class ObjectPooler : MonoBehaviour
 
         nextAvailable = new List<int>();
 
-        poolTypes = new List<List<GameObject>>();
-
-        foreach(ItemType it in System.Enum.GetValues(typeof(ItemType)))
-        {
-            nextAvailable.Add(0);
-
-            poolTypes.Add(new List<GameObject>());
-        }
-
+        pooledItems = new List<List<GameObject>>();
 
         for(int i=0; i<itemsToSpawn.Length;i++)
         {
+            nextAvailable.Add(0);
+
+            pooledItems.Add(new List<GameObject>());
             
             IEnumerable<int> spawnAmount = raritySpawns.Where(spawns => spawns.rarity == itemsToSpawn[i].rarity).Select(spawns => spawns.amount);
 
@@ -65,7 +60,7 @@ public class ObjectPooler : MonoBehaviour
                 g.SetActive(false);
                 g.transform.parent = store.transform;
 
-                poolTypes[(int)itemsToSpawn[i].type].Add(g);
+                pooledItems[i].Add(g);
             }
         }
     }
@@ -74,13 +69,13 @@ public class ObjectPooler : MonoBehaviour
     {
         ResetRarityBag();
 
-        for(int i=0; i<poolTypes.Count;i++)
+        for(int i=0; i<pooledItems.Count;i++)
         {
             nextAvailable[i] = 0;
 
-            for(int j=0; j<poolTypes[i].Count;j++)
+            for(int j=0; j<pooledItems[i].Count;j++)
             {
-                poolTypes[i][j].SetActive(false);
+                pooledItems[i][j].SetActive(false);
             }
         }
     }
@@ -98,27 +93,34 @@ public class ObjectPooler : MonoBehaviour
 
         bag.RemoveAt(index);
 
-        List<ItemType> candidates = itemsToSpawn.Where(p => p.rarity == rarity).Select(p => p.type).ToList();
+        List<int> candidates = new List<int>();
+
+        for(int i=0; i<itemsToSpawn.Length;i++)
+        {
+            if(itemsToSpawn[i].rarity == rarity)
+            {
+                candidates.Add(i);
+            }
+        }
 
         return GetNext(candidates[Random.Range(0,candidates.Count)]);
     }
 
-    public GameObject GetNext(ItemType t)
+    public GameObject GetNext(int index)
     {
-        int type = (int)t;
-        int next = nextAvailable[type];
-
         GameObject g;
-        
-        if(next < poolTypes[type].Count)
-        {
-            g = poolTypes[type][nextAvailable[type]];
 
-            nextAvailable[type]++;
+        int next = nextAvailable[index];
+        
+        if(next < pooledItems[index].Count)
+        {
+            g = pooledItems[index][nextAvailable[index]];
+
+            nextAvailable[index]++;
         }
         else
         {
-            Debug.LogError("Out of " + System.Enum.GetName(typeof(ItemType),type));
+            Debug.LogError("Out of " + itemsToSpawn[index]);
             g = null;
         }
 
@@ -203,17 +205,6 @@ public class RaritySpawnAmount
     public ItemRarity rarity;
 
     public int amount;
-}
-
-public enum ItemType
-{
-    Cereal,
-    Snacks,
-    MiscBoxed,
-    Bread,
-    ToiletRoll,
-    MiscPack,
-    TinCan
 }
 
 public enum ItemRarity
