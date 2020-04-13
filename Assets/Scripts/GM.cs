@@ -19,6 +19,7 @@ public class GM : MonoBehaviour
     ObjectPooler sc_pool;
     ShoppingListManager sc_list;
     ItemSpawnManager sc_spawn;
+    CustomerManager sc_customer;
 
     float cTime;
 
@@ -30,6 +31,7 @@ public class GM : MonoBehaviour
         sc_pool = GetComponent<ObjectPooler>();
         sc_list = GetComponent<ShoppingListManager>();
         sc_spawn = GetComponent<ItemSpawnManager>();
+        sc_customer = GetComponent<CustomerManager>();
 
         go_canvas.SetActive(true);
 
@@ -60,7 +62,9 @@ public class GM : MonoBehaviour
 
         sc_spawn.GenerateStock(8);
 
-        //reset items!
+        sc_customer.GenerateCustomers(100);
+
+        //reset items! Done?
 
 
     }

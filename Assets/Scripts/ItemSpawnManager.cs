@@ -8,17 +8,21 @@ public class ItemSpawnManager : MonoBehaviour
 
     //Density per Aisle is max 200 (actually 198)
 
+    public string leftNodeStart;
+    public string rightNodeStart;
+    
     public int shelvesperS;
 
     public int topSpawnNo;
     public int middleSpawnNo;
     public int bottomSpawnNo;
     
-    public GameObject ItemStore;
-    public GameObject[] LeftRow;
-    public GameObject[] MiddleRow;
-    public GameObject[] RightRow;
+    public GameObject itemStore;
+    public GameObject[] leftRow;
+    public GameObject[] middleRow;
+    public GameObject[] rightRow;
 
+    public List<AisleID> travelIDs;
     public int variance;
 
     public int[] busyMM;
@@ -34,12 +38,98 @@ public class ItemSpawnManager : MonoBehaviour
     void Awake()
     {
         pool = GetComponent<ObjectPooler>();
+
+        travelIDs = new List<AisleID>();
+    
+        for(int i=0; i<leftRow.Length;i++)
+        {
+            AisleID current = new AisleID(Row.Left,i);
+
+            current.leftNodes = GetNodes(leftRow[i],true);
+            current.rightNodes = GetNodes(leftRow[i],false);
+
+            travelIDs.Add(current);
+        }
+
+        for(int i=0; i<middleRow.Length;i++)
+        {
+            AisleID current = new AisleID(Row.Middle,i);
+
+            current.leftNodes = GetNodes(middleRow[i],true);
+            current.rightNodes = GetNodes(middleRow[i],false);
+            
+            travelIDs.Add(current);
+        }
+
+        for(int i=0; i<rightRow.Length;i++)
+        {
+            AisleID current = new AisleID(Row.Right,i);
+
+            current.leftNodes = GetNodes(rightRow[i],true);
+            current.rightNodes = GetNodes(rightRow[i],false);
+            
+            travelIDs.Add(current);
+        }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public AisleID GetTravelAisle(Vector3 position, AisleID currentAisle, bool stayInRow)
     {
-        
+        List<AisleID> candidates = new List<AisleID>();
+
+        if(stayInRow)
+        {
+            foreach(AisleID a in travelIDs)
+            {
+                if(a.row == currentAisle.row && a.aisleNo != currentAisle.aisleNo)
+                {
+                    candidates.Add(a);
+                }
+            }
+        }
+        else
+        {
+            foreach(AisleID a in travelIDs)
+            {
+                if(a.row != currentAisle.row)
+                {
+                    candidates.Add(a);
+                }
+            }
+        }
+
+        AisleID option = candidates[Random.Range(0,candidates.Count)];
+
+        return option;
+
+    }
+
+    public AisleID GetNearestAisleID(Vector3 position)
+    {
+        float minDistance = Mathf.Infinity;
+
+        AisleID chosenID = new AisleID(Row.Left,0);
+
+        foreach(AisleID aID in travelIDs)
+        {
+            Vector3 nearestNode = aID.GetNearestNode(position, AisleSide.Left | AisleSide.Right);
+
+            float distance = Vector3.Distance(nearestNode,position);
+
+            if(distance < minDistance)
+            {
+                chosenID = aID;
+                minDistance = distance;
+
+           //     Debug.Log("Pos: " + position + " nearestNode: " + nearestNode);
+            }
+        }
+
+        if(minDistance == Mathf.Infinity)
+        {
+            Debug.LogError("No close Aisle found for input position: " + position);
+        }
+
+        return chosenID;
     }
 
     public void GenerateStock(int day)
@@ -52,19 +142,19 @@ public class ItemSpawnManager : MonoBehaviour
 
         pool.Refresh();
 
-        for(int i=0; i<LeftRow.Length; i++)
+        for(int i=0; i<leftRow.Length; i++)
         {
-            LeftRow[i].SetActive(false);
+            leftRow[i].SetActive(false);
         }
 
-        for(int i=0; i<MiddleRow.Length; i++)
+        for(int i=0; i<middleRow.Length; i++)
         {
-            MiddleRow[i].SetActive(false);
+            middleRow[i].SetActive(false);
         }
 
-        for(int i=0; i<RightRow.Length; i++)
+        for(int i=0; i<rightRow.Length; i++)
         {
-            RightRow[i].SetActive(false);
+            rightRow[i].SetActive(false);
         }
 
         ///Fill Busy Aisles
@@ -110,7 +200,7 @@ public class ItemSpawnManager : MonoBehaviour
 
         ///Determine number of aisles left and density left
 
-        int aislesLeft = LeftRow.Length + MiddleRow.Length + RightRow.Length - busyCount - emptyCount;
+        int aislesLeft = leftRow.Length + middleRow.Length + rightRow.Length - busyCount - emptyCount;
 
         int varianceAmount = Random.Range(-variance,variance+1);
         
@@ -186,35 +276,31 @@ public class ItemSpawnManager : MonoBehaviour
             (bulk[day].baseDensity + varianceAmount - currentDensity));
 
     //    Debug.Log("requested betas: " + ABCounter);
-
-
-
-
     }
 
     AisleID GetFreeAisle()
     {
         List<Row> bag = new List<Row>();
 
-        for(int i=0; i<LeftRow.Length;i++)
+        for(int i=0; i<leftRow.Length;i++)
         {
-            if(LeftRow[i].activeSelf == false)
+            if(leftRow[i].activeSelf == false)
             {
                 bag.Add(Row.Left);
             }
         }
 
-        for(int i=0; i<MiddleRow.Length;i++)
+        for(int i=0; i<middleRow.Length;i++)
         {
-            if(MiddleRow[i].activeSelf == false)
+            if(middleRow[i].activeSelf == false)
             {
                 bag.Add(Row.Middle);
             }
         }
 
-        for(int i=0; i<RightRow.Length;i++)
+        for(int i=0; i<rightRow.Length;i++)
         {
-            if(RightRow[i].activeSelf == false)
+            if(rightRow[i].activeSelf == false)
             {
                 bag.Add(Row.Right);
             }
@@ -237,13 +323,13 @@ public class ItemSpawnManager : MonoBehaviour
         switch(r)
         {
             case Row.Left:
-                tempRow = LeftRow;
+                tempRow = leftRow;
                 break;
             case Row.Middle:
-                tempRow = MiddleRow;
+                tempRow = middleRow;
                 break;
             case Row.Right:
-                tempRow = RightRow;
+                tempRow = rightRow;
                 break;
             default:
                 Debug.LogError("Not a recognised Row");
@@ -260,7 +346,7 @@ public class ItemSpawnManager : MonoBehaviour
             }
         }
 
-        AisleID id = new AisleID{row = r, ailseNo = freeI[Random.Range(0,freeI.Count)]};
+        AisleID id = new AisleID(r,freeI[Random.Range(0,freeI.Count)]);
 
         return id;
     }
@@ -273,18 +359,18 @@ public class ItemSpawnManager : MonoBehaviour
      //   Debug.Log("AD: " + density);
 
         Row r = id.row;
-        int aisle = id.ailseNo;
+        int aisle = id.aisleNo;
 
         switch(r)
         {
             case Row.Left:
-                SpawnAisle(LeftRow,aisle,density);
+                SpawnAisle(leftRow,aisle,density);
                 break;
             case Row.Middle:
-                SpawnAisle(MiddleRow,aisle,density);
+                SpawnAisle(middleRow,aisle,density);
                 break;
             case Row.Right:
-                SpawnAisle(RightRow,aisle,density);
+                SpawnAisle(rightRow,aisle,density);
                 break;
             default:
                 Debug.LogError("Not a recognised Row");
@@ -471,6 +557,33 @@ public class ItemSpawnManager : MonoBehaviour
 
     }
 
+    public List<Vector3> GetNodes(GameObject aisle, bool left)
+    {
+        List<Vector3> nodes = new List<Vector3>();
+
+        for(int i=0; i<aisle.transform.childCount; i++)
+        {
+            string n = aisle.transform.GetChild(i).name;
+
+            if(left)
+            {
+                if(n.Contains(leftNodeStart))
+                {
+                    nodes.Add(aisle.transform.GetChild(i).position);
+                }
+            }
+            else
+            {
+                if(n.Contains(rightNodeStart))
+                {
+                    nodes.Add(aisle.transform.GetChild(i).position);
+                }
+            }
+        }
+
+        return nodes;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -487,13 +600,85 @@ public class DayBulk
 
     public int noOfEmptyAisles;
 
+    public int noOfStartingCustomers;
+
 }
 
+[System.Serializable]
 public class AisleID
 {
     public Row row;
 
-    public int ailseNo;
+    public int aisleNo;
+
+    public List<Vector3> leftNodes;
+
+    public List<Vector3> rightNodes;
+
+    public AisleID(Row r, int no)
+    {
+        row = r;
+        aisleNo = no;
+    }
+
+    public Vector3 GetFurthestAisleExit(Vector3 position)
+    {
+        //figure out which side of the aisle we are closest to
+        Vector3 nearestLeft = GetNearestNode(position, AisleSide.Left);
+        float leftDist = Vector3.Distance(position,nearestLeft);
+        Vector3 nearestRight = GetNearestNode(position,AisleSide.Right);
+        float rightDist = Vector3.Distance(position,nearestRight);
+
+        AisleSide furthestSide = leftDist < rightDist ? AisleSide.Right : AisleSide.Left;
+
+        //get closest exit node for the other side of the aisle#
+
+        return GetNearestNode(position,furthestSide);
+    }
+
+    public Vector3 GetNearestNode(Vector3 position, AisleSide sides)
+    {
+        List<Vector3> nodes = new List<Vector3>();
+
+        if(sides.HasFlag(AisleSide.Left))
+        {
+            nodes.AddRange(leftNodes);
+        }
+
+        if(sides.HasFlag(AisleSide.Right))
+        {
+            nodes.AddRange(rightNodes);
+        }
+
+        if((int)sides == 0)
+        {
+            Debug.LogError("No nodes to search for when locating nearest node.");
+        }
+
+        Vector3 chosenNode = position;
+
+        float minDistance = Mathf.Infinity;
+
+        foreach(Vector3 n in nodes)
+        {
+            float distance = Vector3.Distance(n,position);
+
+            if(distance < minDistance)
+            {
+                chosenNode = n;
+                minDistance = distance;
+            }
+        }
+
+        return chosenNode;
+    }
+}
+
+[System.Flags]
+public enum AisleSide
+{
+    Left = 1,
+    Right = 2
 }
 
 public enum Row

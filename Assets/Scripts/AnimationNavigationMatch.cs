@@ -14,12 +14,23 @@ public class AnimationNavigationMatch : MonoBehaviour
     Vector2 smoothDeltaPosition = Vector2.zero;
     Vector2 velocity = Vector2.zero;
 
+    public CustomerManager sc_manager;
+
+    public int uniqueKey;
+
+    bool moving;
+
     void Start()
     {
         anim = GetComponent<Animator> ();
         agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
         // Don’t update position automatically
         agent.updatePosition = false;
+    }
+
+    public void SetManager(CustomerManager manager)
+    {
+        sc_manager = manager;
     }
     
     void Update ()
@@ -47,11 +58,20 @@ public class AnimationNavigationMatch : MonoBehaviour
             anim.SetFloat("Speed_f", velocity.magnitude);
             anim.SetBool("Static_b",false);
 
+            moving = true;
+
            // Debug.Log(velocity.magnitude);
         }
         else
         {
-            anim.SetBool("Static_b",true);
+            if(moving)
+            {
+                anim.SetBool("Static_b",true);
+
+                sc_manager.Finished(uniqueKey);
+
+                moving = false;
+            }
         }
 
     //    GetComponent<LookAt>().lookAtTargetPosition = agent.steeringTarget + transform.forward;
