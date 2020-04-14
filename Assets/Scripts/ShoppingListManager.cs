@@ -14,9 +14,15 @@ public class ShoppingListManager : MonoBehaviour
     
     public GameObject[] go_items;
 
+    public GameObject[] go_menuItems;
+
+    public GameObject go_menuAdd;
+
     ObjectPooler sc_pool;
 
-    TextMeshProUGUI[] text_items;
+    TextMeshProUGUI[] text_items, menu_items;
+
+    TextMeshProUGUI menu_Add;
 
     List<Item> desiredItems;
 
@@ -34,11 +40,18 @@ public class ShoppingListManager : MonoBehaviour
      //   text_items = go_items.GetComponent<TextMesh>();
 
         text_items = new TextMeshProUGUI[go_items.Length];
-
         for(int i=0; i<go_items.Length;i++)
         {
             text_items[i] = go_items[i].GetComponent<TextMeshProUGUI>();
         }
+
+        menu_items = new TextMeshProUGUI[go_menuItems.Length];
+        for(int i=0; i<go_menuItems.Length;i++)
+        {
+            menu_items[i] = go_menuItems[i].GetComponent<TextMeshProUGUI>();
+        }
+
+        menu_Add = go_menuAdd.GetComponent<TextMeshProUGUI>();
 
         int sizeCheck = 0;
 
@@ -154,6 +167,41 @@ public class ShoppingListManager : MonoBehaviour
                 text_items[i].fontStyle = FontStyles.Normal;
             }
         }       
+    }
+
+    public void UpdateMenu()
+    {
+        List<string> aquiredNames = text_items
+                                        .Where(ti => ti.fontStyle.HasFlag(FontStyles.Strikethrough))
+                                        .Select(text_items => text_items.text).ToList();
+
+        
+        
+        int others = trolleyContents.Count - aquiredNames.Count;
+
+        //test
+        /*
+        foreach(string s in aquiredNames)
+        {
+            Debug.Log(s);
+        }
+
+        Debug.Log(others);*/
+
+        for(int i=0; i<menu_items.Length;i++)
+        {
+            if(aquiredNames.Count - 1 >= i)
+            {
+                menu_items[i].text = aquiredNames[i];
+            }
+            else
+            {
+                menu_items[i].text = "";
+            }
+        }
+
+        menu_Add.text = "And " + others + " Others.";
+
     }
 
     // Update is called once per frame

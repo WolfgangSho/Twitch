@@ -6,6 +6,8 @@ public class AuraDetection : MonoBehaviour
 {
     public GameObject go_SanitizerFill;
 
+    public GameObject go_GM;
+
     public float maxRisk;
     public float shrinkDelay;
     public float shrinkMult;
@@ -19,10 +21,13 @@ public class AuraDetection : MonoBehaviour
 
     ControlFill fill;
 
+    GM gameM;
+
     // Start is called before the first frame update
     void Awake()
     {
         fill = go_SanitizerFill.GetComponent<ControlFill>();
+        gameM = go_GM.GetComponent<GM>();
 
         fillPercent = 100f;
 
@@ -94,7 +99,7 @@ public class AuraDetection : MonoBehaviour
     {
         if(fillPercent < 0)
         {
-            Debug.Log("YOU LOSE SIR");
+            gameM.GameOver();
         }
         else
         {

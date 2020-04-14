@@ -11,6 +11,9 @@ public class GM : MonoBehaviour
     public GameObject go_canvas;
     public GameObject go_menu;
 
+    public GameObject go_menu_GameOver;
+    public GameObject go_menu_Checkout;
+
     public Vector3 playerStartPos;
     public Vector3 playerStartRot;
 
@@ -42,9 +45,14 @@ public class GM : MonoBehaviour
 
     public void Checkout()
     {
-        go_menu.SetActive(true);
+        Debug.Log("HDHDHD");
+        sc_list.UpdateMenu();
+        SetMenu(MenuState.Checkout);
+    }
 
-        sc_pc.playable = false;
+    public void NextDay()
+    {
+        Debug.Log("NEXT DAY");
     }
 
     public void LevelReset()
@@ -54,9 +62,7 @@ public class GM : MonoBehaviour
         go_player.transform.position = playerStartPos;
         go_player.transform.localRotation = Quaternion.Euler(playerStartRot);
 
-        go_menu.SetActive(false);
-
-        sc_pc.playable = true;
+        SetMenu(MenuState.Clear);
 
         sc_list.PickItems();
 
@@ -74,10 +80,52 @@ public class GM : MonoBehaviour
         LevelReset();
     }
 
+    public void GameOver()
+    {
+        SetMenu(MenuState.GameOver);
+    }
+        
+    void SetMenu(MenuState state)
+    {
+        //clear all menu states
+        
+        go_menu_GameOver.SetActive(false);
+        go_menu_Checkout.SetActive(false);
+
+
+        if(state == MenuState.Clear)
+        {
+            go_menu.SetActive(false);
+            sc_pc.playable = true;
+        }
+        else
+        {
+            go_menu.SetActive(true);
+            sc_pc.playable = false;
+
+            switch(state)
+            {
+                case MenuState.GameOver:
+                    go_menu_GameOver.SetActive(true);
+                    break;
+                case MenuState.Checkout:
+                    go_menu_Checkout.SetActive(true);
+                    break;
+            }
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
         
     }
+}
+
+public enum MenuState
+{
+    Clear,
+    Checkout,
+    GameOver
 }
