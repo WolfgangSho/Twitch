@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GM : MonoBehaviour
 {
+    
+    public int maxDays;
+    public int day;
+    public int score;
     public GameObject go_player;
     public GameObject go_aura;
 
@@ -11,8 +15,11 @@ public class GM : MonoBehaviour
     public GameObject go_canvas;
     public GameObject go_menu;
 
+    public GameObject go_menu_Start;
     public GameObject go_menu_GameOver;
     public GameObject go_menu_Checkout;
+
+    public GameObject go_menu_GameEnd;
 
     public Vector3 playerStartPos;
     public Vector3 playerStartRot;
@@ -40,19 +47,31 @@ public class GM : MonoBehaviour
 
         sc_pool.FillPool();
 
-        GameReset();
+        SetMenu(MenuState.Start);
     }
+
 
     public void Checkout()
     {
-        Debug.Log("HDHDHD");
-        sc_list.UpdateMenu();
+        score += sc_list.ProcessCheckout();
         SetMenu(MenuState.Checkout);
     }
 
     public void NextDay()
     {
-        Debug.Log("NEXT DAY");
+
+        day++;
+
+        if(day < maxDays)
+        {
+            LevelReset();
+        }
+        else
+        {
+            sc_list.UpdateGameEndMenu(score);
+            SetMenu(MenuState.End);
+        }
+        
     }
 
     public void LevelReset()
@@ -66,22 +85,23 @@ public class GM : MonoBehaviour
 
         sc_list.PickItems();
 
-        sc_spawn.GenerateStock(8);
+        sc_spawn.GenerateStock(day);
 
-        sc_customer.GenerateCustomers(100);
+        int customersToSpawn = sc_spawn.CustomerBulk(day);
 
-        //reset items! Done?
-
-
+        sc_customer.GenerateCustomers(customersToSpawn);
     }
 
     public void GameReset()
     {
+        day = 0;
+        score = 0;
         LevelReset();
     }
 
     public void GameOver()
     {
+        sc_list.UpdateGameOverMenu(day+1, score);
         SetMenu(MenuState.GameOver);
     }
         
@@ -89,8 +109,10 @@ public class GM : MonoBehaviour
     {
         //clear all menu states
         
+        go_menu_Start.SetActive(false);
         go_menu_GameOver.SetActive(false);
         go_menu_Checkout.SetActive(false);
+        go_menu_GameEnd.SetActive(false);
 
 
         if(state == MenuState.Clear)
@@ -105,11 +127,17 @@ public class GM : MonoBehaviour
 
             switch(state)
             {
+                case MenuState.Start:
+                    go_menu_Start.SetActive(true);
+                    break;
                 case MenuState.GameOver:
                     go_menu_GameOver.SetActive(true);
                     break;
                 case MenuState.Checkout:
                     go_menu_Checkout.SetActive(true);
+                    break;
+                case MenuState.End:
+                    go_menu_GameEnd.SetActive(true);
                     break;
             }
         }
@@ -126,6 +154,8 @@ public class GM : MonoBehaviour
 public enum MenuState
 {
     Clear,
+    Start,
     Checkout,
-    GameOver
+    GameOver,
+    End
 }

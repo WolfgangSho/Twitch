@@ -72,6 +72,11 @@ public class ItemSpawnManager : MonoBehaviour
         }
     }
 
+    public int CustomerBulk(int day)
+    {
+        return bulk[day].noOfStartingCustomers;
+    }
+
     public AisleID GetTravelAisle(Vector3 position, AisleID currentAisle, bool stayInRow)
     {
         List<AisleID> candidates = new List<AisleID>();

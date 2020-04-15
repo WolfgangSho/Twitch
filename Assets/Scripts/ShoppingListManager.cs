@@ -14,15 +14,25 @@ public class ShoppingListManager : MonoBehaviour
     
     public GameObject[] go_items;
 
-    public GameObject[] go_menuItems;
+    public GameObject[] go_checkoutMenuItems;
 
-    public GameObject go_menuAdd;
+    public GameObject go_checkoutMenuAdd;
+
+    public GameObject go_GameOverMenuDays;
+
+    public GameObject go_GameOverMenuScore;
+
+    public GameObject go_GameEndMenuScore;
 
     ObjectPooler sc_pool;
 
-    TextMeshProUGUI[] text_items, menu_items;
+    TextMeshProUGUI[] text_items, checkoutMenu_items;
 
     TextMeshProUGUI menu_Add;
+
+    TextMeshProUGUI menu_GODays, menu_GOScore;
+
+    TextMeshProUGUI menu_GEScore;
 
     List<Item> desiredItems;
 
@@ -45,13 +55,18 @@ public class ShoppingListManager : MonoBehaviour
             text_items[i] = go_items[i].GetComponent<TextMeshProUGUI>();
         }
 
-        menu_items = new TextMeshProUGUI[go_menuItems.Length];
-        for(int i=0; i<go_menuItems.Length;i++)
+        checkoutMenu_items = new TextMeshProUGUI[go_checkoutMenuItems.Length];
+        for(int i=0; i<go_checkoutMenuItems.Length;i++)
         {
-            menu_items[i] = go_menuItems[i].GetComponent<TextMeshProUGUI>();
+            checkoutMenu_items[i] = go_checkoutMenuItems[i].GetComponent<TextMeshProUGUI>();
         }
 
-        menu_Add = go_menuAdd.GetComponent<TextMeshProUGUI>();
+        menu_Add = go_checkoutMenuAdd.GetComponent<TextMeshProUGUI>();
+
+        menu_GODays = go_GameOverMenuDays.GetComponent<TextMeshProUGUI>();
+        menu_GOScore = go_GameOverMenuScore.GetComponent<TextMeshProUGUI>();
+
+        menu_GEScore = go_GameEndMenuScore.GetComponent<TextMeshProUGUI>();
 
         int sizeCheck = 0;
 
@@ -169,7 +184,7 @@ public class ShoppingListManager : MonoBehaviour
         }       
     }
 
-    public void UpdateMenu()
+    public int ProcessCheckout()
     {
         List<string> aquiredNames = text_items
                                         .Where(ti => ti.fontStyle.HasFlag(FontStyles.Strikethrough))
@@ -179,29 +194,34 @@ public class ShoppingListManager : MonoBehaviour
         
         int others = trolleyContents.Count - aquiredNames.Count;
 
-        //test
-        /*
-        foreach(string s in aquiredNames)
-        {
-            Debug.Log(s);
-        }
-
-        Debug.Log(others);*/
-
-        for(int i=0; i<menu_items.Length;i++)
+        for(int i=0; i<checkoutMenu_items.Length;i++)
         {
             if(aquiredNames.Count - 1 >= i)
             {
-                menu_items[i].text = aquiredNames[i];
+                checkoutMenu_items[i].text = aquiredNames[i];
             }
             else
             {
-                menu_items[i].text = "";
+                checkoutMenu_items[i].text = "";
             }
         }
 
         menu_Add.text = "And " + others + " Others.";
 
+        return ((5 * aquiredNames.Count) + others);
+
+    }
+
+    public void UpdateGameOverMenu(int day, int score)
+    {
+        menu_GODays.text = "You caught Covid on day " + day;
+
+        menu_GOScore.text = "Your score is: " + score;
+    }
+    
+    public void UpdateGameEndMenu(int score)
+    {
+        menu_GEScore.text = "Your final score is: " + score;
     }
 
     // Update is called once per frame
