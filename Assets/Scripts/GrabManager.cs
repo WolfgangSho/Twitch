@@ -25,10 +25,14 @@ public class GrabManager : MonoBehaviour
 
     bool grabbing;
 
+    public bool playable;
+
     // Start is called before the first frame update
     void Start()
     {
         grabbing = false;
+
+        playable = true;
 
         sc_grabmesh = go_grabmesh.GetComponent<Raycasting>();
     }
@@ -40,7 +44,7 @@ public class GrabManager : MonoBehaviour
 
         if(!grabbing)
         {
-            if(Input.GetMouseButtonDown(0))
+            if(Input.GetMouseButtonDown(0) && playable)
             {
 
                 RaycastHit hit;
@@ -89,7 +93,7 @@ public class GrabManager : MonoBehaviour
 
             activeItem.position = newPos;
 
-            if(Input.GetMouseButtonUp(0))
+            if(Input.GetMouseButtonUp(0) || !playable)
             {
                 activeBody.useGravity = true;
 

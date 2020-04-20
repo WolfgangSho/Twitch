@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GM : MonoBehaviour
 {
@@ -21,8 +22,12 @@ public class GM : MonoBehaviour
 
     public GameObject go_menu_GameEnd;
 
+    public GameObject go_gui_day;
+
     public Vector3 playerStartPos;
     public Vector3 playerStartRot;
+
+    TextMeshProUGUI gui_day;
 
     AuraDetection sc_aura;
     PlayerController_Sonic3 sc_pc;
@@ -30,18 +35,22 @@ public class GM : MonoBehaviour
     ShoppingListManager sc_list;
     ItemSpawnManager sc_spawn;
     CustomerManager sc_customer;
+    GrabManager sc_grab;
 
     float cTime;
 
     // Start is called before the first frame update
     void Start()
     {
+        gui_day = go_gui_day.GetComponent<TextMeshProUGUI>();
+
         sc_aura = go_aura.GetComponent<AuraDetection>();
         sc_pc = go_player.GetComponent<PlayerController_Sonic3>();
         sc_pool = GetComponent<ObjectPooler>();
         sc_list = GetComponent<ShoppingListManager>();
         sc_spawn = GetComponent<ItemSpawnManager>();
         sc_customer = GetComponent<CustomerManager>();
+        sc_grab = GetComponent<GrabManager>();
 
         go_canvas.SetActive(true);
 
@@ -59,7 +68,6 @@ public class GM : MonoBehaviour
 
     public void NextDay()
     {
-
         day++;
 
         if(day < maxDays)
@@ -76,6 +84,8 @@ public class GM : MonoBehaviour
 
     public void LevelReset()
     {
+        gui_day.text = "Day: " + (day+1);
+
         sc_aura.Reset();
 
         go_player.transform.position = playerStartPos;
@@ -119,11 +129,13 @@ public class GM : MonoBehaviour
         {
             go_menu.SetActive(false);
             sc_pc.playable = true;
+            sc_grab.playable = true;
         }
         else
         {
             go_menu.SetActive(true);
             sc_pc.playable = false;
+            sc_grab.playable = false;
 
             switch(state)
             {
