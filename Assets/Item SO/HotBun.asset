@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullName: Hot Nought Bun
   prefab: {fileID: 7861387718154783773, guid: d8f71dc76c7f447439721bf07762a088, type: 3}
-  rarity: 1
+  rarity: 0

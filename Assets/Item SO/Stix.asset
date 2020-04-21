@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: Stix
   m_EditorClassIdentifier: 
   fullName: Stix Snacks
-  type: 1
   prefab: {fileID: 7861387718154783773, guid: 95470b4ba59b24f4a824f316391c82fb, type: 3}
-  rarity: 1
+  rarity: 0

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullName: Large Box
   prefab: {fileID: 7861387718154783773, guid: e059c8b94a75753429d2451432311594, type: 3}
-  rarity: 0
+  rarity: 1

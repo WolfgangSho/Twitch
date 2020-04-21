@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Animations;
 
 public class AuraDetection : MonoBehaviour
 {
@@ -13,9 +14,18 @@ public class AuraDetection : MonoBehaviour
     public float shrinkMult;
     public float drainSpeed;
 
+    public GameObject go_AlertLeft;
+    public GameObject go_AlertRight;
+    public GameObject go_AlertTop;
+    public GameObject go_AlertBottom;
+
     float waitTime;
 
-    
+    Animator anim_AlertLeft;
+    Animator anim_AlertRight;
+    Animator anim_AlertTop;
+    Animator anim_AlertBottom;
+
     float riskCount;
     float fillPercent; //between 0 and 100
 
@@ -28,6 +38,11 @@ public class AuraDetection : MonoBehaviour
     {
         fill = go_SanitizerFill.GetComponent<ControlFill>();
         gameM = go_GM.GetComponent<GM>();
+
+        anim_AlertLeft = go_AlertLeft.GetComponent<Animator>();
+        anim_AlertRight = go_AlertRight.GetComponent<Animator>();
+        anim_AlertTop= go_AlertTop.GetComponent<Animator>();
+        anim_AlertBottom = go_AlertBottom.GetComponent<Animator>();
 
         fillPercent = 100f;
 
@@ -74,11 +89,24 @@ public class AuraDetection : MonoBehaviour
             {
                 riskCount = 0;
             }
+
+            if(riskCount == 0)
+            {
+                anim_AlertLeft.SetBool("Danger",false);
+                anim_AlertRight.SetBool("Danger",false);
+                anim_AlertTop.SetBool("Danger",false);
+                anim_AlertBottom.SetBool("Danger",false);
+            }
         }
     }
 
     void OnTriggerStay(Collider c)
     {
+        anim_AlertLeft.SetBool("Danger",true);
+        anim_AlertRight.SetBool("Danger",true);
+        anim_AlertTop.SetBool("Danger",true);
+        anim_AlertBottom.SetBool("Danger",true);
+
         riskCount+= Time.fixedDeltaTime;
 
         waitTime = shrinkDelay;

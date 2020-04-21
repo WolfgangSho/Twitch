@@ -48,8 +48,9 @@ public class CustomerManager : MonoBehaviour
         foreach(CustomerInfo customer in spawnedCustomers)
         {
             customer.Destroy();
-            spawnedCustomers.Remove(customer);
         }
+
+        spawnedCustomers.Clear();
         
         ///make existing customers
 

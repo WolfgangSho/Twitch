@@ -6,6 +6,8 @@ using UnityEngine;
 public class ObjectPooler : MonoBehaviour
 {
     
+    public int numberOfSlots;
+    
     public int commonWeight;
     public int uncommonWeight;
     public int rareWeight;
@@ -24,6 +26,10 @@ public class ObjectPooler : MonoBehaviour
 
     List<ItemRarity> bag;
 
+    public SlotRarityChances[] slotChances;
+    List<Item> slotBag;
+    int[] slotAmounts;
+
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +40,8 @@ public class ObjectPooler : MonoBehaviour
     public void FillPool()
     {
         ResetRarityBag();
+
+        ResetSlotBag();
 
         nextAvailable = new List<int>();
 
@@ -68,6 +76,8 @@ public class ObjectPooler : MonoBehaviour
     public void Refresh()
     {
         ResetRarityBag();
+
+        ResetSlotBag();
 
         for(int i=0; i<pooledItems.Count;i++)
         {
@@ -125,6 +135,131 @@ public class ObjectPooler : MonoBehaviour
         }
 
         return g;
+    }
+
+    void ResetSlotBag()
+    {
+        //make slot available int array
+        slotAmounts = new int[itemsToSpawn.Length];
+        List<int> fullElements = new List<int>();
+
+        SlotRarityChances src;
+        Item it;
+
+        int slots;
+
+        for(int i=0; i<slotAmounts.Length;i++)
+        {
+            it = itemsToSpawn[i];
+            src = slotChances.First(r => r.rarity == it.rarity);
+
+            slots = src.gaurenteed;
+
+            if(Random.value < src.chance1)
+            {
+                slots++;
+            }
+
+            if(Random.value < src.chance2)
+            {
+                slots++;
+            }
+
+            if(slots == src.gaurenteed + 2)
+            {       
+                fullElements.Add(i);
+            }
+
+            slotAmounts[i] = slots;
+        }
+
+        
+
+      //  Debug.Log("Before alteration: " + slotAmounts.Sum());
+
+        int iterations = 0;
+
+        while(slotAmounts.Sum() != numberOfSlots)
+        {
+            int index = -1;
+
+            if(fullElements.Count > 0)
+            {
+                index = fullElements[Random.Range(0,fullElements.Count)];
+            }
+            else
+            {
+                while(index < 0)
+                {
+                    int tempIndex = Random.Range(0,slotAmounts.Length);
+
+                    if(slotAmounts[tempIndex] > 1)
+                    {
+                        index = tempIndex;
+                    }
+                }
+            }
+
+      //      Debug.Log(fullElements.Count);
+      //      Debug.Log("index is " + index);
+
+            if(slotAmounts.Sum() > numberOfSlots)
+            {
+                slotAmounts[index]--;
+                fullElements.Remove(index);
+            }
+            
+            if(slotAmounts.Sum() < numberOfSlots)
+            {
+                slotAmounts[Random.Range(0,slotAmounts.Length)]++;
+            }
+
+            iterations++;
+
+            if(iterations > 5000)
+            {
+                Debug.LogError("Trapped in while loop");
+                break;
+            }
+        }
+
+     //   Debug.Log("After alteration: " + slotAmounts.Sum());
+
+        slotBag = new List<Item>();
+
+        for(int i=0; i<itemsToSpawn.Length; i++)
+        {
+            for(int j=0; j<slotAmounts[i]; j++)
+            {
+                slotBag.Add(itemsToSpawn[i]);
+            }
+        }
+    }
+
+    public GameObject[] AssignSlot(int density)
+    {
+        int itemIndex = -1;
+
+        while(itemIndex < 0)
+        {
+            int tempIndex = Random.Range(0,slotAmounts.Length);
+
+            if(slotAmounts[tempIndex] > 0)
+            {
+                itemIndex = tempIndex;
+
+                slotAmounts[tempIndex]--;
+            }
+        }
+
+        GameObject[] prefabs = new GameObject[density];
+
+        for(int i=0; i<prefabs.Length; i++)
+        {
+            prefabs[i] = GetNext(itemIndex);
+        }
+
+        return prefabs;
     }
 
     void ResetRarityBag()
@@ -205,6 +340,18 @@ public class RaritySpawnAmount
     public ItemRarity rarity;
 
     public int amount;
+}
+
+[System.Serializable]
+public class SlotRarityChances
+{
+    public ItemRarity rarity;
+
+    public float chance1;
+
+    public float chance2;
+
+    public int gaurenteed;
 }
 
 public enum ItemRarity
