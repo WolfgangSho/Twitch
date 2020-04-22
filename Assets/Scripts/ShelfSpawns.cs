@@ -62,6 +62,27 @@ public class ShelfSpawns : MonoBehaviour
         }
     }
 
+    public int GetMaxSpawns()
+    {
+        int number = topPositions.Length + middlePositions.Length + bottomPositions.Length;
+
+        return number;
+    }
+
+    public int GetMaxTop()
+    {
+        return topPositions.Length;
+    }
+    public int GetMaxMiddle()
+    {
+        return middlePositions.Length;
+    }
+
+    public int GetMaxBottom()
+    {
+        return bottomPositions.Length;
+    }
+
     // Update is called once per frame
     void Update()
     {

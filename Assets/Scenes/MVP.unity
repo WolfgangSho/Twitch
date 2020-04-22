@@ -8353,7 +8353,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d41e883e77b00349bd0bf8e45d69617, type: 2}
+  - {fileID: 2100000, guid: 79dfe4bbd89b4c64dad9e256055e1893, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28914,7 +28914,6 @@ MonoBehaviour:
     chance1: 0.4
     chance2: 0.1
     gaurenteed: 1
-  slotAmounts: 
 --- !u!114 &889437171
 MonoBehaviour:
   m_ObjectHideFlags: 0

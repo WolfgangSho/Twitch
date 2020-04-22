@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ItemSpawnManager : MonoBehaviour
@@ -34,6 +35,11 @@ public class ItemSpawnManager : MonoBehaviour
     int currentDensity;
 
     int aisleDCounter;
+
+    int spawnIndex, spawnsLeft;
+
+    int spawnedTop, spawnedMiddle, spawnedBottom;
+
 
     void Awake()
     {
@@ -70,6 +76,13 @@ public class ItemSpawnManager : MonoBehaviour
             
             travelIDs.Add(current);
         }
+    }
+
+    public void Start()
+    {
+        //test
+        //SpawnSlot(null,60);
+
     }
 
     public int CustomerBulk(int day)
@@ -369,18 +382,233 @@ public class ItemSpawnManager : MonoBehaviour
         switch(r)
         {
             case Row.Left:
-                SpawnAisle(leftRow,aisle,density);
+                SpawnAisle(leftRow[aisle],density);
+              //  SpawnAisle(leftRow,aisle,density);
                 break;
             case Row.Middle:
-                SpawnAisle(middleRow,aisle,density);
+                SpawnAisle(middleRow[aisle],density);
+            //    SpawnAisle(middleRow,aisle,density);
                 break;
             case Row.Right:
-                SpawnAisle(rightRow,aisle,density);
+                SpawnAisle(rightRow[aisle],density);
+             //   SpawnAisle(rightRow,aisle,density);
                 break;
             default:
                 Debug.LogError("Not a recognised Row");
                 break;
         }
+
+    }
+
+    void SpawnAisle(GameObject aisle, int density)
+    {
+        aisle.SetActive(true);
+
+        //divide density by number of shelves per side
+        int divDensity = Mathf.FloorToInt((float)density/shelvesperS);
+        int remDensity = density - ((shelvesperS-1)*divDensity);
+
+        //make shelf spawn slot references
+        Slot[] slots = new Slot[shelvesperS];
+
+        GameObject go_left = aisle.transform.GetChild(0).gameObject;
+        GameObject go_right = aisle.transform.GetChild(1).gameObject;
+
+        for(int i=0; i<shelvesperS;i++)
+        {
+            slots[i] = new Slot();
+
+            slots[i].left = go_left.transform.GetChild(i).gameObject.GetComponent<ShelfSpawns>();
+            slots[i].right = go_right.transform.GetChild(i).gameObject.GetComponent<ShelfSpawns>();
+
+            //spawn slots with required density
+            if(i == 0)
+            {
+                SpawnSlot(slots[i], remDensity);
+            }
+            else
+            {
+                SpawnSlot(slots[i], divDensity);
+            }
+        }
+    }
+
+    void SpawnSlot(Slot chosenSlot, int density)
+    {
+        //one side gets 2/3rds the other gets 1/3
+        float d = (float)density;
+        
+        int sideADensity = Mathf.CeilToInt(d/3f);
+
+        int sideBDensity = (density - sideADensity);
+
+        int maxSpawns = Mathf.Min(chosenSlot.left.GetMaxSpawns(),chosenSlot.right.GetMaxSpawns());
+
+        if(sideBDensity > maxSpawns)
+        {
+            sideADensity += sideBDensity - maxSpawns;
+        
+            sideBDensity = maxSpawns;
+
+            if(sideADensity > maxSpawns)
+            {
+                Debug.LogError("Too much density sent to slot");
+
+                sideADensity = maxSpawns;
+            }
+        }
+
+        GameObject[] spawnObjects = pool.AssignSlot(density);
+
+        GameObject[] spawnA = spawnObjects.Take(sideADensity).ToArray();
+        GameObject[] spawnB = spawnObjects.Skip(sideADensity).Take(sideBDensity).ToArray();
+
+       // Debug.Log(spawnA.Length + " " + spawnB.Length);
+
+        if(Random.value > 0.5f)
+        {
+            SpawnShelf(chosenSlot.left,spawnA, false);
+            SpawnShelf(chosenSlot.right,spawnB, true);
+        }
+        else
+        {
+            SpawnShelf(chosenSlot.left,spawnB, false);
+            SpawnShelf(chosenSlot.right,spawnA, true);
+        }
+    }
+
+    void SpawnShelf(ShelfSpawns shelf, GameObject[] spawns, bool flip)
+    {
+        spawnIndex = 0;
+        spawnsLeft = spawns.Length;
+        int iterations = 0;
+
+        int maxTop = shelf.GetMaxTop();
+        int maxMiddle = shelf.GetMaxMiddle();
+        int maxBottom = shelf.GetMaxBottom();
+
+        spawnedTop = 0;
+        spawnedMiddle = 0;
+        spawnedBottom = 0;
+
+        while(spawnsLeft > 0)
+        {
+            if(spawnedTop == maxTop && spawnedMiddle == maxMiddle && spawnedBottom == maxBottom)
+            {
+                Debug.LogError("Shelf full, excess: " + spawnsLeft);
+                spawnsLeft = 0;
+            }
+
+            if(spawnsLeft > 1)
+            {
+                if(spawnedTop < maxTop)
+                {
+                    SpawnItem(shelf, ShelfNo.Top, spawns[spawnIndex], flip);
+
+                    //assign second
+                    if(spawnedTop < maxTop)
+                    {
+                        SpawnItem(shelf, ShelfNo.Top, spawns[spawnIndex], flip);
+                    }
+                }
+
+                if(spawnsLeft > 1)
+                {
+                    if(spawnedMiddle < maxMiddle)
+                    {
+                        SpawnItem(shelf, ShelfNo.Middle, spawns[spawnIndex], flip);
+
+                        //assign second
+                        if(spawnedMiddle < maxMiddle)
+                        {
+                            SpawnItem(shelf, ShelfNo.Middle, spawns[spawnIndex], flip);
+                        }
+                    }
+                }
+
+                if(spawnsLeft > 0)
+                {
+                    if(spawnedBottom < maxBottom)
+                    {
+                        SpawnItem(shelf, ShelfNo.Bottom, spawns[spawnIndex], flip);
+                    }
+                }
+            }
+            else
+            {
+                //exactly 1 left
+                if(spawnedTop < maxTop)
+                {
+                    SpawnItem(shelf, ShelfNo.Top, spawns[spawnIndex], flip);
+                }
+                else if(spawnedMiddle < maxMiddle)
+                {
+                    SpawnItem(shelf, ShelfNo.Middle, spawns[spawnIndex], flip);
+                }
+                else if(spawnedBottom < maxBottom)
+                {
+                    SpawnItem(shelf, ShelfNo.Bottom, spawns[spawnIndex], flip);
+                }
+                else
+                {
+                    Debug.LogError("Can't place last item.");
+                    spawnsLeft = 0;
+                }
+
+            }
+            
+            iterations++;
+
+            if(iterations > 30000)
+            {
+                Debug.LogError("While loop stuck.");
+                break;
+            }
+
+        }
+
+    }
+
+    void SpawnItem(ShelfSpawns shelf, ShelfNo loc, GameObject spawn, bool flip)
+    {
+        spawnIndex++;
+        spawnsLeft--;
+        currentDensity++;
+
+        Vector3 pos; 
+
+        switch(loc)
+        {
+            case ShelfNo.Top:
+                pos = shelf.GetPos(loc,spawnedTop);
+                spawnedTop++;
+                break;
+            case ShelfNo.Middle:
+                pos = shelf.GetPos(loc,spawnedMiddle);
+                spawnedMiddle++;
+                break;
+            case ShelfNo.Bottom:
+                pos = shelf.GetPos(loc,spawnedBottom);
+                spawnedBottom++;
+                break;
+            default:
+                pos = Vector3.zero;
+                Debug.LogError("Incorrect Shelf Number");
+            break;
+        }
+
+        spawn.transform.position = pos;
+
+        if(flip)
+        {
+            spawn.transform.rotation = Quaternion.Euler(0,180,0);
+        }
+        else
+        {
+            spawn.transform.rotation = Quaternion.Euler(0,0,0);
+        }
+
+        spawn.SetActive(true);
 
     }
 
@@ -594,6 +822,13 @@ public class ItemSpawnManager : MonoBehaviour
     {
         
     }
+}
+
+public class Slot
+{
+    public ShelfSpawns left;
+
+    public ShelfSpawns right;
 }
 
 [System.Serializable]
